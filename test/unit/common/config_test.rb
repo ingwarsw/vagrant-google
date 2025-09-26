@@ -54,6 +54,7 @@ describe VagrantPlugins::Google::Config do
     its("enable_secure_boot")          { should be_falsey }
     its("enable_vtpm")                 { should be_falsey }
     its("enable_integrity_monitoring") { should be_falsey }
+    its("resource_policies")           { should == [] }
   end
 
   describe "overriding defaults" do

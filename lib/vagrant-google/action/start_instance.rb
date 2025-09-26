@@ -58,7 +58,7 @@ module VagrantPlugins
                       timeout: env[:machine].provider_config.instance_ready_timeout
               end
             end
-          rescue Fog::Compute::Google::Error => e
+          rescue Fog::Google::Compute::Error => e
             raise Errors::FogError, :message => e.message
           end
 

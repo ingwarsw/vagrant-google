@@ -24,8 +24,8 @@ module VagrantPlugins
         include Vagrant::Util::Retryable
 
         FOG_ERRORS = [
-          Fog::Compute::Google::NotFound,
-          Fog::Compute::Google::Error,
+          Fog::Google::Compute::NotFound,
+          Fog::Google::Compute::Error,
           Fog::Errors::Error
         ].freeze
 
