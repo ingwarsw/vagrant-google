@@ -193,10 +193,11 @@ module VagrantPlugins
                 source_image: image
               )
               disk.wait_for { disk.ready? }
+              disk.reload
               disk_created_by_vagrant = true
             else
               disk = env[:google_compute].disks.get(disk_name, zone)
-              if disk.nil?
+              if disk.nil? || disk.status.nil?
                 # disk not found... create it with name
                 disk = env[:google_compute].disks.create(
                   name: disk_name,
@@ -206,6 +207,7 @@ module VagrantPlugins
                   source_image: image
                 )
                 disk.wait_for { disk.ready? }
+                disk.reload
                 disk_created_by_vagrant = true
               end
             end
@@ -265,12 +267,14 @@ module VagrantPlugins
                   zone_name: zone,
                   source_image: additional_disk_image
                 )
+                additional_disk.wait_for { additional_disk.ready? }
+                additional_disk.reload
               else
                 # additional_disk_name set in disk_config
                 additional_disk_name = disk_config[:disk_name]
 
                 additional_disk = env[:google_compute].disks.get(additional_disk_name, zone)
-                if additional_disk.nil?
+                if additional_disk.nil? || additional_disk.status.nil?
                   # disk not found... create it with name
                   additional_disk = env[:google_compute].disks.create(
                     name: additional_disk_name,
@@ -280,6 +284,10 @@ module VagrantPlugins
                     source_image: additional_disk_image
                   )
                   additional_disk.wait_for { additional_disk.ready? }
+                  additional_disk.reload
+                else
+                  # disk exists, manually set self_link if not present
+                  additional_disk.self_link ||= "https://compute.googleapis.com/compute/v1/projects/#{project_id}/zones/#{zone}/disks/#{additional_disk_name}"
                 end
               end
 
